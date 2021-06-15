@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class TencentCloudImUtil {
     private static final String HTTPS_URL_PREFIX = "https://console.tim.qq.com/";
     private static final String APP_MANAGER = "administrator";
-    private static final String REDIS_IM_USER_SIG = "xizhuan:im_user_sig:";
+    private static final String REDIS_IM_USER_SIG = "silence:im_user_sig:";
 
     @Value("${silence.tencent.cloud.im.sdkAppId}")
     private long sdkAppId;
@@ -125,7 +125,6 @@ public class TencentCloudImUtil {
         log.info("腾讯云im查询账号，请求参数：{}", jsonObject.toString());
         String result = HttpUtil.doPost2(httpsUrl, jsonObject);
         log.info("腾讯云im查询账号，返回结果：{}", result);
-        JSONObject resultObject = JSONObject.parseObject(result);
         return result;
     }
 
