@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +50,18 @@ public class RedisServiceUtil {
         }
         return result;
     }
+
+    /**
+     * 设置指定键的过期时间
+     * @param key 键
+     * @param expireTime 过期时间
+     * @param timeUnit 时间单位
+     * @return true：成功
+     */
+    public boolean setExpire(final String key, Long expireTime, TimeUnit timeUnit) {
+        return redisTemplate.expire(key, expireTime, timeUnit);
+    }
+
     /**
      * 批量删除对应的value
      * @param keys
@@ -102,6 +115,15 @@ public class RedisServiceUtil {
     }
 
     /**
+     * 以map集合的形式添加键值对
+     * @param key 键
+     * @param map Map
+     */
+    public void hPutAll(String key, Map<String, Object> map) {
+        redisTemplate.opsForHash().putAll(key, map);
+    }
+
+    /**
      * 哈希获取数据
      * @param key
      * @param hashKey
@@ -110,6 +132,47 @@ public class RedisServiceUtil {
     public Object hmGet(String key, Object hashKey) {
         HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
         return hash.get(key,hashKey);
+    }
+
+    /**
+     * 根据键获取到redis中存储的map
+     * @param key 键
+     * @return 键对应的map
+     */
+    public Map<String, Object> hGetAll(String key) {
+        return redisTemplate.opsForHash().entries(key);
+    }
+
+    /**
+     * 自增/自减key对应map中的指定字段的long型数值
+     * @param key 键
+     * @param field key对应map中存储的字段
+     * @param increment 正数-自增；负数-自减
+     * @return 自增/自减后的数值
+     */
+    public Long hashIncrBy(String key, Object field, long increment) {
+        return redisTemplate.opsForHash().increment(key, field, increment);
+    }
+
+    /**
+     * 自增/自减key对应map中的指定字段的double型数值
+     * @param key 键
+     * @param field key对应map中存储的字段
+     * @param delta 正数-自增；负数-自减
+     * @return 自增/自减后的数值
+     */
+    public Double hIncrByDouble(String key, Object field, double delta) {
+        return redisTemplate.opsForHash().increment(key, field, delta);
+    }
+
+    /**
+     * 查询redis中指定字段是否存在
+     * @param key 键
+     * @param field key对应map中存储的字段
+     * @return true:存在
+     */
+    public boolean hashExists(String key, String field) {
+        return redisTemplate.opsForHash().hasKey(key, field);
     }
 
     /**
